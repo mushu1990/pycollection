@@ -5,7 +5,7 @@ import os,sys,time,post,yahoo,urllib
 
 """
 arguments:
--t:    POST url, needed
+-u:    POST url, needed
 -k:   key file name should be a path   defalut  key.txt
 -t:   collection and pulish interval seconds       defalut  5 seconds
 -c:   Special for get yahoo content, list content  10 ,20 or 30 default 20
@@ -18,8 +18,8 @@ keyfile= open("./key.txt","r")
 count=20
 interval = 10
 """
-if ( "-t" in arguments ):
-    t = arguments.index("-t")+1
+if ( "-u" in arguments ):
+    u = arguments.index("-u")+1
     url = arguments[t]
 else:
     print "Must Input a Target URL -t url"
@@ -38,7 +38,6 @@ if ( "-t" in arguments ):
         interval = int(arguments[t])
     except:
         interval = 10
-    print interval
 
 if ( "-c" in arguments ):
     c = arguments.index("-c")+1
