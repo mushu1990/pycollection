@@ -20,14 +20,7 @@ class Collection:
         try:
             page = urllib2.urlopen(req)
             return page.read()
-        except urllib2.HTTPError, e:
-            print "Error Code:", e.code
-            return False
-        except urllib2.URLError, e:
-            print "Error Reason:", e.reason
-            return False
         except:
-            print "Unkown Error"
             return False
         
 

@@ -1,10 +1,11 @@
-#/usr/bin/env python
+#!/usr/bin/env python
 #author Hito http://www.hitoy.org/
 
 import os,sys,time,post,yahoo,urllib
 
 """
 arguments:
+-t:    POST url, needed
 -k:   key file name should be a path   defalut  key.txt
 -t:   collection and pulish interval seconds       defalut  5 seconds
 -c:   Special for get yahoo content, list content  10 ,20 or 30 default 20
@@ -13,15 +14,23 @@ arguments:
 
 logfile   = open("./pycltnd.log","a+")
 arguments = sys.argv
-keyfile="./key.txt"
+keyfile= open("./key.txt","r")
 count=20
 interval = 10
-
+"""
+if ( "-t" in arguments ):
+    t = arguments.index("-t")+1
+    url = arguments[t]
+else:
+    print "Must Input a Target URL -t url"
+    sys.exit()
+"""
 if ( "-k" in arguments ):
     k = arguments.index("-k")+1
     filename = arguments[k]
     if os.path.exists(filename):
-        keyfile = filename
+        keyfile.close()
+        keyfile = open(filename,"r")
 
 if ( "-t" in arguments ):
     t = arguments.index("-t")+1
@@ -42,34 +51,35 @@ if ( "-c" in arguments ):
 if ( "-d" in arguments ):
     try:
         pid = os.fork()
-        #parent
-        if pid:exit()
-        os.setsid()
-        os.umask(0)
-        os.chdir("/")
-        os.dup2(logfile.fileno(),0)
-        os.dup2(logfile.fileno(),1)
-        os.dup2(logfile.fileno(),2)
     except:
         print "Your System are not support to run as deamon"
-
-
-
-
-
+    
+    if pid:sys.exit()
+    os.setsid()
+    os.umask(0)
+    os.chdir("/")
+    os.dup2(logfile.fileno(),0)
+    os.dup2(logfile.fileno(),1)
+    os.dup2(logfile.fileno(),2)
+    os.close(logfile.fileno())
 """main"""
-try:
-    keyfd=open(keyfile,'r')
-except:
-    print "Can not open keyfile %s"%keyfile
-
 while True:
-    key = keyfd.readline().strip()
-    if len(key) == 0: break
-    yahoourl="http://search.yahoo.com/search?p=%s&n=%s"%(key,count)
-    YaCo=yahoo.Yahoo(yahoourl)
-    post.POST("http://localhost/",{"title":key,"post_content":YaCo.filter()})
-    time.sleep(interval)
-close(keyfile)
-close(logfile)
-
+    try:
+        key = keyfile.readline().strip()
+        if len(key) == 0: break
+        yahoourl="https://search.yahoo.com/search?p=%s&n=%s"%(urllib.quote(key),count)
+        YaCo=yahoo.Yahoo(yahoourl)
+        post_content= YaCo.filter()
+        if ( post_content and len(post_content) > 10 ):
+                    result=post.POST("http://www.raymondmill.com/es/post/main.php?action=save&secret=yht123hito",{"post_title":key,"post_content":post_content})
+                    sys.stdout.write(("[%s] - %s - %s\n")%(time.ctime(),key,result))
+        else:
+            sys.stdout.write(("[%s] - %s - %s\n")%(time.ctime(),key,"Collection Failure"))
+            
+        sys.stdout.flush()
+        time.sleep(interval)
+    except KeyboardInterrupt,e:
+        break
+    
+#close
+keyfile.close()
