@@ -18,7 +18,7 @@ class Collection:
         header={"Accept": "text/plain","Connection":"close","User-Agent":self.__ua,"Referer":self.__referer}
         req = urllib2.Request(url,headers=header)
         try:
-            page = urllib2.urlopen(req)
+            page = urllib2.urlopen(req,timeout=10)
             return page.read()
         except:
             return False

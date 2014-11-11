@@ -3,7 +3,7 @@ import urllib2,urllib
 
 def POST(url,data):
     formdata=urllib.urlencode(data)
-    f = urllib2.urlopen(url, formdata)
+    f = urllib2.urlopen(url, formdata,timeout=10)
     content = f.read()
     return content
 
