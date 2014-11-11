@@ -70,8 +70,11 @@ while True:
         YaCo=yahoo.Yahoo(yahoourl)
         post_content= YaCo.filter()
         if ( post_content and len(post_content) > 10 ):
-                    result=post.POST("http://www.raymondmill.com/es/post/main.php?action=save&secret=yht123hito",{"post_title":key,"post_content":post_content})
-                    sys.stdout.write(("[%s] - %s - %s\n")%(time.ctime(),key,result))
+                    try:
+                        result=post.POST("http://www.raymondmill.com/es/post/main.php?action=save&secret=yht123hito",{"post_title":key,"post_content":post_content})
+                        sys.stdout.write(("[%s] - %s - %s\n")%(time.ctime(),key,result))
+                    except:
+                        sys.stdout.write(("[%s] - %s - %s\n")%(time.ctime(),key,'publish Failure'))
         else:
             sys.stdout.write(("[%s] - %s - %s\n")%(time.ctime(),key,"Collection Failure"))
             
